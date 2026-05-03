@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MapPin, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import type { SahayakUser } from "@/types/user";
 import { cn } from "@/lib/utils/cn";
 
@@ -37,17 +38,15 @@ export function DeveloperCard({ user, distanceKm, className }: DeveloperCardProp
         ) : null}
       </div>
 
-      <div>
-        <div className="font-sans text-lg tracking-tight text-foreground transition-colors group-hover:text-accent">
-          {user.displayName}
-        </div>
-        <div className="mt-1 flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-          <MapPin className="h-3 w-3" strokeWidth={1.5} />
-          <span>
-            {user.location?.city ?? "—"}
-            {typeof distanceKm === "number" ? ` · ${distanceKm.toFixed(1)} km` : ""}
-          </span>
-        </div>
+      <div className="font-sans text-lg tracking-tight text-foreground transition-colors group-hover:text-accent">
+        {user.displayName}
+      </div>
+      <div className="mt-1 flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+        <MapPin className="h-3 w-3" strokeWidth={1.5} />
+        <span>
+          {user.location?.city ?? "—"}
+          {typeof distanceKm === "number" ? ` · ${distanceKm.toFixed(1)} km` : ""}
+        </span>
       </div>
 
       {user.bio ? (
@@ -63,6 +62,18 @@ export function DeveloperCard({ user, distanceKm, className }: DeveloperCardProp
           ))}
         </div>
       ) : null}
+
+      <Button
+        variant="accent"
+        className="mt-4"
+        onClick={(e) => {
+          e.preventDefault();
+          // Redirect to chat with this user
+          window.location.href = `/chat/${user.uid}`;
+        }}
+      >
+        Chat
+      </Button>
 
       <span className="link-underline mt-auto font-mono text-[11px] uppercase tracking-widest text-foreground">
         View Profile →

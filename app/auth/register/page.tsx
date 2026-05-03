@@ -50,7 +50,7 @@ export default function RegisterPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ action: "enrich-self", city: form.city }),
       }).catch(() => {});
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -81,7 +81,7 @@ export default function RegisterPage() {
                 setLoading(true);
                 try {
                   await signInWithGoogle();
-                  router.push("/dashboard");
+                  router.push("/onboarding");
                 } catch (e) {
                   setError((e as Error).message);
                 } finally {

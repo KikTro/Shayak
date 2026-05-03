@@ -21,7 +21,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await signInWithGoogle();
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -35,7 +35,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await signInWithEmail(email, password);
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (err) {
       setError((err as Error).message);
     } finally {

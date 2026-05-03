@@ -1,0 +1,28 @@
+# deps
+node_modules/
+.pnp
+.pnp.js
+
+# next
+.next/
+out/
+build/
+dist/
+
+# env
+.env*
+!.env.example
+
+# firebase
+service-account.json
+.firebase/
+firebase-debug.log
+
+# misc
+.DS_Store
+*.log
+.vscode/
+.idea/
+coverage/
+*.tsbuildinfo
+next-env.d.ts

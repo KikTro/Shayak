@@ -1,0 +1,44 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function sizeOk(mb) {
+      return request.resource.size < mb * 1024 * 1024;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // ───────── Profile photos ─────────
+    match /profiles/{uid}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn()
+        && request.auth.uid == uid
+        && isImage()
+        && sizeOk(5);
+    }
+
+    // ───────── Chat attachments ─────────
+    match /chats/{roomId}/{uid}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn()
+        && request.auth.uid == uid
+        && sizeOk(10);
+    }
+
+    // ───────── Event covers (organizers) ─────────
+    match /events/{eventId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() && isImage() && sizeOk(5);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

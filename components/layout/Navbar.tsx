@@ -84,9 +84,10 @@ export function Navbar() {
             {firebaseUser ? (
               <div className="flex items-center gap-4">
                 <Link
-                  href={`/profile/${firebaseUser.uid}`}
+                  href="/onboarding"
                   className="flex items-center gap-3"
-                  aria-label="My profile"
+                  aria-label="Edit my profile"
+                  title="Click to edit your profile"
                 >
                   <div className="flex h-8 w-8 items-center justify-center overflow-hidden bg-muted">
                     {profile?.photoURL ? (
@@ -98,7 +99,7 @@ export function Navbar() {
                       </span>
                     )}
                   </div>
-                  <span className="font-sans text-sm text-foreground">
+                  <span className="font-sans text-sm text-foreground hover:text-accent transition-colors">
                     {profile?.displayName ?? "Builder"}
                   </span>
                 </Link>

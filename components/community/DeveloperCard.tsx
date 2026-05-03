@@ -1,7 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MapPin, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/hooks/useAuth";
+import { getOrCreateDMRoom } from "@/lib/firebase/firestore";
 import type { SahayakUser } from "@/types/user";
 import { cn } from "@/lib/utils/cn";
 
@@ -12,6 +18,38 @@ interface DeveloperCardProps {
 }
 
 export function DeveloperCard({ user, distanceKm, className }: DeveloperCardProps) {
+  const router = useRouter();
+  const { firebaseUser, profile } = useAuth();
+  const [chatLoading, setChatLoading] = useState(false);
+
+  async function handleChatClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!firebaseUser || !profile) {
+      router.push("/auth/login");
+      return;
+    }
+
+    if (firebaseUser.uid === user.uid) {
+      return; // Can't chat with yourself
+    }
+
+    setChatLoading(true);
+    try {
+      const roomId = await getOrCreateDMRoom(
+        firebaseUser.uid,
+        user.uid,
+        { displayName: profile.displayName, photoURL: profile.photoURL },
+        { displayName: user.displayName, photoURL: user.photoURL },
+      );
+      router.push(`/chat/${roomId}`);
+    } catch (err) {
+      console.error("Failed to create chat room:", err);
+      setChatLoading(false);
+    }
+  }
+
   return (
     <Link
       href={`/profile/${user.uid}`}
@@ -66,11 +104,8 @@ export function DeveloperCard({ user, distanceKm, className }: DeveloperCardProp
       <Button
         variant="accent"
         className="mt-4"
-        onClick={(e) => {
-          e.preventDefault();
-          // Redirect to chat with this user
-          window.location.href = `/chat/${user.uid}`;
-        }}
+        loading={chatLoading}
+        onClick={handleChatClick}
       >
         Chat
       </Button>

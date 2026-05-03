@@ -92,4 +92,46 @@ export function subscribeQuery<T>(
   });
 }
 
+/**
+ * Find or create a DM room between two users.
+ * Returns the room ID.
+ */
+export async function getOrCreateDMRoom(
+  currentUid: string,
+  otherUid: string,
+  currentUser: { displayName: string; photoURL?: string },
+  otherUser: { displayName: string; photoURL?: string },
+): Promise<string> {
+  const db = getFirebaseDb();
+  const chats = chatsCol();
+
+  // Look for existing DM room between these two users
+  const q = query(
+    chats,
+    where("type", "==", "dm"),
+    where("participants", "array-contains", currentUid),
+  );
+  const snap = await getDocs(q);
+
+  for (const d of snap.docs) {
+    const room = d.data() as ChatRoom;
+    if (room.participants?.includes(otherUid)) {
+      return d.id;
+    }
+  }
+
+  // No existing room found, create a new one
+  const newRoom: Omit<ChatRoom, "id"> = {
+    name: `${currentUser.displayName} & ${otherUser.displayName}`,
+    type: "dm",
+    participants: [currentUid, otherUid],
+    createdBy: currentUid,
+    isPublic: false,
+    createdAt: serverTimestamp() as unknown as Date,
+  };
+
+  const docRef = await addDoc(chats, newRoom);
+  return docRef.id;
+}
+
 export { addDoc, doc, getDoc, orderBy, where, fsLimit as limit, serverTimestamp, setDoc, updateDoc, query };

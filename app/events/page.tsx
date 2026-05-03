@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { useAuth } from "@/hooks/useAuth";
 
-interface ClaudeEvent {
+interface SearchEvent {
   title: string;
   description: string;
   organizer: string;
@@ -46,7 +46,7 @@ export default function EventsPage() {
   const [country, setCountry] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
 
-  const [events, setEvents] = useState<ClaudeEvent[]>([]);
+  const [events, setEvents] = useState<SearchEvent[]>([]);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -84,7 +84,7 @@ export default function EventsPage() {
           limit: 15,
         }),
       });
-      const data = (await res.json()) as { events?: ClaudeEvent[]; error?: string };
+      const data = (await res.json()) as { events?: SearchEvent[]; error?: string };
       if (!res.ok) throw new Error(data.error ?? "Search failed");
       setEvents(data.events ?? []);
     } catch (err) {
@@ -100,12 +100,12 @@ export default function EventsPage() {
       <div className="sahayak-container">
         <div className="flex items-center gap-6">
           <AccentBar width="sm" />
-          <Label>Discover · Powered by Claude</Label>
+          <Label>Discover</Label>
         </div>
         <H1 className="mt-6">Events near you.</H1>
         <Body className="mt-4 max-w-2xl text-muted-foreground">
-          Tell us where you are and what you care about. Claude searches the
-          open web — GDGs, meetups, conferences, hackathons — and returns what&rsquo;s
+          Tell us where you are and what you care about. We search the
+          open web — GDGs, meetups, conferences, hackathons — and return what&rsquo;s
           worth your time.
         </Body>
 
@@ -164,7 +164,7 @@ export default function EventsPage() {
           <div className="flex items-center gap-4">
             <Button type="submit" variant="accent" loading={searching}>
               <Sparkles className="mr-2 h-4 w-4" strokeWidth={1.5} />
-              Search with Claude
+              Search
             </Button>
             {!authLoading && !profile ? (
               <Link
@@ -183,7 +183,7 @@ export default function EventsPage() {
           <div className="flex items-center justify-between border-b border-border px-5 py-3">
             <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
               {searching
-                ? "Claude is searching…"
+                ? "Searching near you…"
                 : hasSearched
                 ? `${events.length} result${events.length === 1 ? "" : "s"}`
                 : "Run a search to see events"}
